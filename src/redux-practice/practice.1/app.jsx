@@ -22,6 +22,11 @@ MessageList.propTypes = {
   data: PropTypes.array.isRequired,
 };
 
+// mapStateToProps
+const mapStateToProps = state => ({ data: state.message });
+
+const List = connect(mapStateToProps)(MessageList);
+
 class InputMessage extends React.Component {
   constructor(props) {
     super(props);
@@ -70,27 +75,20 @@ InputMessage.propTypes = {
   addMessage: PropTypes.func,
 };
 
-class ConnectMessageForm extends React.Component {
+// mapDispatchToProps
+const mapDispatchToProps = dispatch => ({ addMessage(message) { dispatch(addMessage(message)); } });
+
+const Input = connect(null, mapDispatchToProps)(InputMessage);
+
+class MessageForm extends React.Component {
   render() {
     return (
-      <div>
-        <InputMessage addMessage={this.props.addMessage} />
-        <MessageList data={this.props.data} />
-      </div>
+      <Provider store={store}>
+        <Input />
+        <List />
+      </Provider>
     );
   }
 }
 
-ConnectMessageForm.propTypes = {
-  data: PropTypes.array,
-  addMessage: PropTypes.func,
-};
-
-const mapStateToProps = state => ({ data: state.message });
-const mapDispatchToProps = dispatch => ({ addMessage(message) { dispatch(addMessage(message)); } });
-
-const MessageForm = connect(mapStateToProps, mapDispatchToProps)(ConnectMessageForm);
-
-ReactDOM.render(<Provider store={store}>
-  <MessageForm />
-</Provider>, document.querySelector('#app'));
+ReactDOM.render(<MessageForm />, document.querySelector('#app'));
